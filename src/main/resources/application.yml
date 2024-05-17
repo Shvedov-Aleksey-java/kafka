@@ -1,0 +1,33 @@
+server:
+  port: 0
+spring:
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092,localhost:9094
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 10
+      properties:
+        retry:
+          backoff:
+            ms: 1000
+        delivery:
+          timout:
+            ms: 20000
+        linger:
+          ms: 0
+        request:
+          timeout:
+            ms: 10000
+        enable:
+          idempotence: true
+        max:
+          in:
+            flight:
+              request:
+                per:
+                  connection: 5
+      transaction-id-prefix: transfer-service-${random.value}-
+topic:
+  name: product-create-events-topic

@@ -1,0 +1,47 @@
+// ознчает что мы будем ожидать ответ от всех брокеров
+spring.kafka.producer.acks=all
+
+// ознчает что мы будем ожидать ответ от определенного количества брокеров
+spring.kafka.producer.acks=количество
+
+// какое максимально число папыток зделать где 10 число попыток на отправку
+spring.kafka.producer.retries=10
+
+// с каким интервалом отпровлять отправку (default: 100ms) в милисекундах
+spring.kafka.producer.properties.retry.backoff.ms=1000
+
+// отвечает за количество запросов без ответа в процессе может быть одновременно
+spring.kafka.producer.properties.max.in.flight.requests.per.connection=5
+
+// максимальное время на повторы сообщения (default: 120000ms) потом TimeoutException
+spring.kafka.producer.properties.delivery.timeout.ms=60000
+
+// промежуток времени в течении которого накапливваем сообщения а потом шлем их одним батчем
+spring.kafka.producer.properties.linger.ms=0
+
+// как долго producer ждет ответа от брокера
+spring.kafka.producer.properties.request.timeout.ms=30000
+
+// мы должны учитывать в обезательном порядке:
+delivery.timeout.ms >= linger.ms + request.timeout.ms
+
+// что бы избежать повторной отправки сообщений на сервер idempotence=true явно
+// при этом обезательное условие что бы было spring.kafka.producer.acks=all,
+// spring.kafka.producer.retries > 0,
+// spring.kafka.producer.properties.max.in.flight.requests.per.connection <= 5
+spring.kafka.producer.properties.enable.idempotence=true
+
+// включает транзакцыонность для наших продюсеров в рамках одной продюссер фактори
+// (inc) : вместо этого будет добовлятся уникальный ид пример: transfer-service-${random.value}-1
+// ${random.value} : что бу имя продюссера было уникальным
+spring.kafka.producer.transaction-id-prefix=transfer-service-${random.value}-(inc)
+
+// включает логи транзакций
+logging.level.org.springframework.kafka.transaction=TRACE
+
+// включаем обычные логи
+logging.level.org.springframework.transaction=TRACE
+
+// настраиваем consumer так что бы он читал только закомиченные сообщения по умолчанию READ_UNCOMMITED
+spring.kafka.consumer.isolation-level=READ_COMMITED
+
